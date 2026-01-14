@@ -97,60 +97,6 @@ pipeline:
   properties:
     ci:
       codebase:
-        connectorRef: YOUR_GIT_CONNECTOR_ID
-        repoName: YOUR_REPO_NAME
+        connectorRef: Github_Personal
+        repoName: harnessci
         build: <+input>
-
----
-# Alternative: Self-Managed Kubernetes Infrastructure
-# Uncomment and use this if you're running on self-managed Kubernetes
-
-# pipeline:
-#   name: nodejs-ci-pipeline-k8s
-#   identifier: nodejs_ci_pipeline_k8s
-#   projectIdentifier: YOUR_PROJECT_ID
-#   orgIdentifier: YOUR_ORG_ID
-#   stages:
-#     - stage:
-#         name: Build and Test Node App
-#         identifier: Build_and_Test_Node_App
-#         type: CI
-#         spec:
-#           cloneCodebase: true
-#           infrastructure:
-#             type: KubernetesDirect
-#             spec:
-#               connectorRef: YOUR_K8S_CONNECTOR
-#               namespace: YOUR_NAMESPACE
-#               automountServiceAccountToken: true
-#           execution:
-#             steps:
-#               - step:
-#                   type: Run
-#                   name: Install Dependencies
-#                   identifier: install_dependencies
-#                   spec:
-#                     connectorRef: YOUR_DOCKER_CONNECTOR
-#                     image: node:20-alpine
-#                     shell: Sh
-#                     command: |
-#                       cd nodejs
-#                       npm ci
-#               
-#               - step:
-#                   type: Run
-#                   name: Run Tests
-#                   identifier: run_tests
-#                   spec:
-#                     connectorRef: YOUR_DOCKER_CONNECTOR
-#                     image: node:20-alpine
-#                     shell: Sh
-#                     command: |
-#                       cd nodejs
-#                       npm test
-#                     reports:
-#                       type: JUnit
-#                       spec:
-#                         paths:
-#                           - nodejs/junit.xml
-
