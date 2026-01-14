@@ -1,0 +1,156 @@
+# Harness CI Pipeline for Node.js Application
+# This pipeline builds, tests, and optionally deploys the Node.js demo application
+# Documentation: https://developer.harness.io/docs/continuous-integration/development-guides/ci-nodejs
+
+pipeline:
+  name: nodejs-ci-pipeline
+  identifier: nodejs_ci_pipeline
+  projectIdentifier: default_project
+  orgIdentifier: default
+  tags: {}
+  stages:
+    - stage:
+        name: Build and Test Node App
+        identifier: Build_and_Test_Node_App
+        description: "Build, test, and validate Node.js application"
+        type: CI
+        spec:
+          cloneCodebase: true
+          # Enable Cache Intelligence for faster builds
+          caching:
+            enabled: true
+          # Using Harness Cloud build infrastructure
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              # Step 1: Install dependencies
+              - step:
+                  type: Run
+                  name: Install Dependencies
+                  identifier: install_dependencies
+                  spec:
+                    shell: Sh
+                    command: |
+                      cd nodejs
+                      npm ci
+                    
+              # Step 2: Run linting (optional - add eslint to package.json if needed)
+              - step:
+                  type: Run
+                  name: Lint Code
+                  identifier: lint_code
+                  spec:
+                    shell: Sh
+                    command: |
+                      cd nodejs
+                      npm run lint
+
+              # Step 3: Run unit tests with JUnit report
+              - step:
+                  type: Run
+                  name: Run Tests
+                  identifier: run_tests
+                  spec:
+                    shell: Sh
+                    command: |
+                      cd nodejs
+                      npm test
+                    # Report test results to Harness
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - nodejs/junit.xml
+
+              # Step 4: Run tests with coverage (optional)
+              - step:
+                  type: Run
+                  name: Run Tests with Coverage
+                  identifier: run_tests_coverage
+                  spec:
+                    shell: Sh
+                    command: |
+                      cd nodejs
+                      npm run test:coverage
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - nodejs/junit.xml
+
+              # Step 5: Build step (if applicable)
+              - step:
+                  type: Run
+                  name: Build Application
+                  identifier: build_application
+                  spec:
+                    shell: Sh
+                    command: |
+                      cd nodejs
+                      npm run build
+
+  properties:
+    ci:
+      codebase:
+        connectorRef: YOUR_GIT_CONNECTOR_ID
+        repoName: YOUR_REPO_NAME
+        build: <+input>
+
+---
+# Alternative: Self-Managed Kubernetes Infrastructure
+# Uncomment and use this if you're running on self-managed Kubernetes
+
+# pipeline:
+#   name: nodejs-ci-pipeline-k8s
+#   identifier: nodejs_ci_pipeline_k8s
+#   projectIdentifier: YOUR_PROJECT_ID
+#   orgIdentifier: YOUR_ORG_ID
+#   stages:
+#     - stage:
+#         name: Build and Test Node App
+#         identifier: Build_and_Test_Node_App
+#         type: CI
+#         spec:
+#           cloneCodebase: true
+#           infrastructure:
+#             type: KubernetesDirect
+#             spec:
+#               connectorRef: YOUR_K8S_CONNECTOR
+#               namespace: YOUR_NAMESPACE
+#               automountServiceAccountToken: true
+#           execution:
+#             steps:
+#               - step:
+#                   type: Run
+#                   name: Install Dependencies
+#                   identifier: install_dependencies
+#                   spec:
+#                     connectorRef: YOUR_DOCKER_CONNECTOR
+#                     image: node:20-alpine
+#                     shell: Sh
+#                     command: |
+#                       cd nodejs
+#                       npm ci
+#               
+#               - step:
+#                   type: Run
+#                   name: Run Tests
+#                   identifier: run_tests
+#                   spec:
+#                     connectorRef: YOUR_DOCKER_CONNECTOR
+#                     image: node:20-alpine
+#                     shell: Sh
+#                     command: |
+#                       cd nodejs
+#                       npm test
+#                     reports:
+#                       type: JUnit
+#                       spec:
+#                         paths:
+#                           - nodejs/junit.xml
+
