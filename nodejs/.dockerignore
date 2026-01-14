@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+
+# Test files
+tests/
+*.test.js
+jest.config.js
+coverage/
+junit.xml
+
+# Development files
+.git/
+.gitignore
+.harness/
+README.md
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Build artifacts
+dist/
+build/
+

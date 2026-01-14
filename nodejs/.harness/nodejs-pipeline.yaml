@@ -94,6 +94,27 @@ pipeline:
                       cd nodejs
                       npm run build
 
+              # Step 6: Build and Push Docker Image to Docker Hub
+              - step:
+                  type: BuildAndPushDockerRegistry
+                  name: Build and Push to Docker Hub
+                  identifier: build_and_push_docker
+                  spec:
+                    connectorRef: DockerHub_Connector
+                    repo: <+pipeline.variables.dockerhub_username>/nodejs-harness-demo
+                    tags:
+                      - <+pipeline.sequenceId>
+                      - latest
+                    dockerfile: nodejs/Dockerfile
+                    context: nodejs
+
+  variables:
+    - name: dockerhub_username
+      type: String
+      description: Your Docker Hub username
+      required: true
+      value: <+input>
+
   properties:
     ci:
       codebase:
