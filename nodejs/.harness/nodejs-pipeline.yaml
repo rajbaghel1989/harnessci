@@ -1,7 +1,3 @@
-# Harness CI Pipeline for Node.js Application
-# This pipeline builds, tests, and optionally deploys the Node.js demo application
-# Documentation: https://developer.harness.io/docs/continuous-integration/development-guides/ci-nodejs
-
 pipeline:
   name: nodejs-ci-pipeline
   identifier: nodejs_ci_pipeline
